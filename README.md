@@ -1,8 +1,12 @@
 # netsuite-node
 Node.js project to make raw soap requests to Netsuite.
 
-# Authentication
+## Authentication
 Token based or via email and password.
 
-# Examples
-get contacts, accounts, currencies, invoices and post payments.
+## Examples
+GET contacts, accounts, currencies, invoices
+POST payment
+
+## License
+MIT Licence
