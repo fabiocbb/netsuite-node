@@ -22,7 +22,7 @@ var header = netsuiteSetHeaderSoapRequest(tokenAuthentication);
 //netsuiteGetCurrencies(header);
 
 //Get accounts
-netsuiteGetAccounts(header);
+//netsuiteGetAccounts(header);
 
 //Get contacts
 //var getContactsCreatedFromDate = "2018-05-01T00:00:000.000-10:00";
@@ -31,6 +31,11 @@ netsuiteGetAccounts(header);
 //Get invoices
 //var getInvoicesCreatedFromDate = "2018-05-01T00:00:000.000-10:00";
 //netsuiteGetInvoices(header, getInvoicesCreatedFromDate);
+
+//post payment
+var payment = { contactId: "15", invoiceId: "9", bankAccountId: "145", paymentAmount: "50",
+                accountReceivable: "7", currencyId: "5", externalId: "payment_id", exchangeRate: "1"};
+netsuitePostPayment(header, payment);
 
 
 function netsuiteSetHeaderSoapRequest(tokenAuthentication){
@@ -101,7 +106,6 @@ function netsuiteGetCurrencies(header){
         console.log(body)
     });
 }
-
 function netsuiteGetAccounts(header){
     var body = "<soapenv:Envelope\
                     xmlns:xsd='http://www.w3.org/2001/XMLSchema'\
@@ -188,6 +192,38 @@ function netsuiteGetInvoices(header, dateFrom){
                 </soapenv:Envelope>";
 
     var options = netsuiteSetoptions('search', body);
+    request(options, function (error, response, body) {
+        console.log(body)
+    });
+}
+function netsuitePostPayment(header, payment){
+
+    var body = "<soapenv:Envelope\
+                    xmlns:xsd='http://www.w3.org/2001/XMLSchema'\
+                    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\
+                    xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\
+                    xmlns:platformCore='urn:customers_2017_2.transactions.webservices.netsuite.com'\
+                    xmlns:platformMsgs='urn:messages_2017_2.platform.webservices.netsuite.com'\
+                    xmlns:listRel='urn:customers_2017_2.transactions.webservices.netsuite.com'>\
+                    "+header+"\
+                    <soapenv:Body>\
+                        <upsert xsi:type='platformMsgs:upsertRequest'>\
+                            <record xsi:type='listRel:CustomerPayment' externalId='"+payment.externalId+"'>\
+                                <customer xsi:type='platformCore:RecordRef' internalId='"+payment.contactId+"'></customer>\
+                                <account xsi:type='platformCore:RecordRef' internalId='"+payment.bankAccountId+"'></account>\
+                                <arAcct xsi:type='platformCore:RecordRef'>"+payment.accountReceivable+"</arAcct>\
+                                <applyList replaceAll='false'>\
+                                    <apply apply='true' doc='"+payment.invoiceId+"'></apply>\
+                                </applyList>\
+                                <undepFunds xsi:type='xsd:boolean'>false</undepFunds>\
+                                <currency xsi:type='platformCore:RecordRef'>"+payment.currencyId+"</currency>\
+                                <exchangeRate xsi:type='xsd:double'>"+payment.exchangeRate+"</exchangeRate>\
+                                <payment xsi:type='xsd:double'>"+payment.paymentAmount+"</payment>\
+                            </record>\
+                        </upsert>\
+                    </soapenv:Body>\
+                </soapenv:Envelope>";
+    var options = netsuiteSetoptions('upsert', body);
     request(options, function (error, response, body) {
         console.log(body)
     });
