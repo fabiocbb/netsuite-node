@@ -19,8 +19,18 @@ var tokenAuthentication = true;
 var header = netsuiteSetHeaderSoapRequest(tokenAuthentication);
 
 //Get currencies
-netsuiteGetCurrencies(header);
+//netsuiteGetCurrencies(header);
 
+//Get accounts
+netsuiteGetAccounts(header);
+
+//Get contacts
+//var getContactsCreatedFromDate = "2018-05-01T00:00:000.000-10:00";
+//netsuiteGetContacts(header, getContactsCreatedFromDate);
+
+//Get invoices
+//var getInvoicesCreatedFromDate = "2018-05-01T00:00:000.000-10:00";
+//netsuiteGetInvoices(header, getInvoicesCreatedFromDate);
 
 
 function netsuiteSetHeaderSoapRequest(tokenAuthentication){
@@ -87,6 +97,97 @@ function netsuiteGetCurrencies(header){
                     </soapenv:Body>\
                 </soapenv:Envelope>";
     var options = netsuiteSetoptions('getAll', body);
+    request(options, function (error, response, body) {
+        console.log(body)
+    });
+}
+
+function netsuiteGetAccounts(header){
+    var body = "<soapenv:Envelope\
+                    xmlns:xsd='http://www.w3.org/2001/XMLSchema'\
+                    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\
+                    xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\
+                    xmlns:platformCore='urn:core_2017_2.platform.webservices.netsuite.com'\
+                    xmlns:platformCommon='urn:common_2017_2.platform.webservices.netsuite.com'\
+                    xmlns:platformMsgs='urn:messages_2017_2.platform.webservices.netsuite.com'>\
+                    "+header+"\
+                    <soapenv:Body>\
+                        <platformMsgs:search xmlns='urn:messages_2017_2.platform.webservices.netsuite.com'>\
+                            <platformMsgs:searchRecord xsi:type='platformCommon:AccountSearchBasic'>\
+                                <platformCommon:type operator='anyOf'>\
+                                    <platformCore:searchValue>_bank</platformCore:searchValue>\
+                                    <platformCore:searchValue>_costOfGoodsSold</platformCore:searchValue>\
+                                    <platformCore:searchValue>_creditCard</platformCore:searchValue>\
+                                    <platformCore:searchValue>_equity</platformCore:searchValue>\
+                                    <platformCore:searchValue>_expense</platformCore:searchValue>\
+                                    <platformCore:searchValue>_fixedAsset</platformCore:searchValue>\
+                                    <platformCore:searchValue>_income</platformCore:searchValue>\
+                                    <platformCore:searchValue>_longTermLiability</platformCore:searchValue>\
+                                    <platformCore:searchValue>_otherAsset</platformCore:searchValue>\
+                                    <platformCore:searchValue>_otherCurrentAsset</platformCore:searchValue>\
+                                    <platformCore:searchValue>_otherCurrentLiability</platformCore:searchValue>\
+                                    <platformCore:searchValue>_otherExpense</platformCore:searchValue>\
+                                    <platformCore:searchValue>_otherIncome</platformCore:searchValue>\
+                                </platformCommon:type>\
+                            </platformMsgs:searchRecord>\
+                        </platformMsgs:search>\
+                    </soapenv:Body>\
+                </soapenv:Envelope>";
+
+    var options = netsuiteSetoptions('search', body);
+    request(options, function (error, response, body) {
+        console.log(body)
+    });
+}
+function netsuiteGetContacts(header, dateFrom){
+    var body = "<soapenv:Envelope\
+                    xmlns:xsd='http://www.w3.org/2001/XMLSchema'\
+                    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\
+                    xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\
+                    xmlns:platformCore='urn:core_2017_2.platform.webservices.netsuite.com'\
+                    xmlns:platformCommon='urn:common_2017_2.platform.webservices.netsuite.com'\
+                    xmlns:platformMsgs='urn:messages_2017_2.platform.webservices.netsuite.com'>\
+                    "+header+"\
+                    <soapenv:Body>\
+                        <platformMsgs:search xmlns='urn:messages_2017_2.platform.webservices.netsuite.com'>\
+                            <platformMsgs:searchRecord xsi:type='platformCommon:CustomerSearchBasic'>\
+                                <platformCommon:lastModifiedDate operator='onOrAfter' xsi:type='platformCore:SearchDateField'>\
+                                    <platformCore:searchValue>"+dateFrom+"</platformCore:searchValue>\
+                                </platformCommon:lastModifiedDate>\
+                            </platformMsgs:searchRecord>\
+                        </platformMsgs:search>\
+                    </soapenv:Body>\
+                </soapenv:Envelope>";
+    var options = netsuiteSetoptions('search', body);
+    request(options, function (error, response, body) {
+        console.log(body)
+    });
+}
+function netsuiteGetInvoices(header, dateFrom){
+    var body = "<soapenv:Envelope\
+                    xmlns:xsd='http://www.w3.org/2001/XMLSchema'\
+                    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\
+                    xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\
+                    xmlns:platformCore='urn:core_2017_2.platform.webservices.netsuite.com'\
+                    xmlns:platformCommon='urn:common_2017_2.platform.webservices.netsuite.com'\
+                    xmlns:platformMsgs='urn:messages_2017_2.platform.webservices.netsuite.com'>\
+                    "+header+"\
+                    <soapenv:Body>\
+                        <platformMsgs:search xmlns='urn:messages_2017_2.platform.webservices.netsuite.com'>\
+                            <platformMsgs:searchRecord xsi:type='platformCommon:TransactionSearchBasic'>\
+                                <platformCommon:lastModifiedDate operator='onOrAfter' xsi:type='platformCore:SearchDateField'>\
+                                    <platformCore:searchValue>"+dateFrom+"</platformCore:searchValue>\
+                                </platformCommon:lastModifiedDate>\
+                                <platformCommon:type operator='anyOf'>\
+                                    <platformCore:searchValue>_invoice</platformCore:searchValue>\
+                                    <platformCore:searchValue>_creditMemo</platformCore:searchValue>\
+                                </platformCommon:type>\
+                            </platformMsgs:searchRecord>\
+                        </platformMsgs:search>\
+                    </soapenv:Body>\
+                </soapenv:Envelope>";
+
+    var options = netsuiteSetoptions('search', body);
     request(options, function (error, response, body) {
         console.log(body)
     });
