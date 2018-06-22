@@ -7,7 +7,7 @@ var credentials =  {
     "password": "yourpassword",
     "account": 'netsuite_account_id',
     "applicationId": 'netsuite_application_id',
-    "role": 3,
+    "role": 'role_id',
     "consumerKey": 'app_consumer_key',
     "consumerSecret": 'app_consumer_secret',
     "token": 'app_consumer_token',
